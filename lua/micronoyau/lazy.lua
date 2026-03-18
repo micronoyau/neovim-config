@@ -367,7 +367,9 @@ require("lazy").setup({
                     "docker_compose_language_service",
                     "dockerls",
                     "html",
+                    "jdtls",
                     "jsonls",
+                    "lemminx",
                     "lua_ls",
                     "marksman",
                     -- "pylsp",
@@ -581,6 +583,7 @@ require("lazy").setup({
                     rust       = { "rustfmt" },
                     c          = { "clang-format" },
                     cpp        = { "clang-format" },
+                    xml        = { "lsp" },
                 },
                 format_on_save = nil, -- use <leader>l= to format manually
             })
