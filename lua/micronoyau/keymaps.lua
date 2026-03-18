@@ -153,7 +153,7 @@ map("n", "<leader>mf", "<cmd>Neominimap Focus<CR>", { desc = "Focus minimap" })
 map("n", "<leader>mu", "<cmd>Neominimap Unfocus<CR>", { desc = "Unfocus minimap" })
 
 -----------------------------------------------------------------
--- LSP keymaps: check out lsp.lua
+-- LSP keymaps: check out lazy.lua
 -----------------------------------------------------------------
 
 -----------------------------------------------------------------

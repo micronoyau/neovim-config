@@ -26,20 +26,20 @@ require("lazy").setup({
                 transparent = false,
                 italic_comments = true,
                 disable_nvimtree_bg = true,
-                style = "dark",   -- default; toggled via <leader>tt
+                style = "dark", -- default; toggled via <leader>tt
             })
             vim.cmd([[colorscheme vscode]])
 
             -- Toggle between dark and light variants
             vim.keymap.set("n", "<leader>th", function()
-                local current = vim.g.vscode_style or "dark"
-                local next    = current == "dark" and "light" or "dark"
+                local current      = vim.g.vscode_style or "dark"
+                local next         = current == "dark" and "light" or "dark"
                 vim.g.vscode_style = next
                 require("vscode").setup({
-                    transparent        = false,
-                    italic_comments    = true,
+                    transparent         = false,
+                    italic_comments     = true,
                     disable_nvimtree_bg = true,
-                    style              = next,
+                    style               = next,
                 })
                 vim.cmd([[colorscheme vscode]])
             end, { desc = "Toggle dark/light theme" })
@@ -172,16 +172,16 @@ require("lazy").setup({
             "nvim-tree/nvim-web-devicons",
             "MunifTanjim/nui.nvim",
         },
-        cmd   = "Neotree",
-        event = "VimEnter",
-        config = function()
+        cmd          = "Neotree",
+        event        = "VimEnter",
+        config       = function()
             require("neo-tree").setup({
-                close_if_last_window = true,
-                popup_border_style   = "rounded",
-                enable_git_status    = true,
-                enable_diagnostics   = true,
-                filesystem = {
-                    filtered_items = {
+                close_if_last_window      = true,
+                popup_border_style        = "rounded",
+                enable_git_status         = true,
+                enable_diagnostics        = true,
+                filesystem                = {
+                    filtered_items         = {
                         visible         = false,
                         hide_dotfiles   = false,
                         hide_gitignored = true,
@@ -189,7 +189,7 @@ require("lazy").setup({
                     follow_current_file    = { enabled = true, leave_dirs_open = true },
                     use_libuv_file_watcher = true,
                 },
-                window = {
+                window                    = {
                     position = "left",
                     width    = 35,
                     mappings = {
@@ -370,7 +370,7 @@ require("lazy").setup({
                     "jsonls",
                     "lua_ls",
                     "marksman",
-                    "pylsp",
+                    -- "pylsp",
                     "pyright",
                     "rust_analyzer",
                 },
@@ -407,26 +407,27 @@ require("lazy").setup({
                     map("n", "<leader>lr", vim.lsp.buf.rename, "Rename symbol")
                     map("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
                     map("n", "<leader>=", function()
-                        vim.lsp.buf.format({ async = true })
+                        require("conform").format({ async = true, lsp_fallback = true })
                     end, "Format buffer")
                     map("n", "<leader>lDh", vim.diagnostic.hide, "Hide diagnostics")
                     map("n", "<leader>lDs", vim.diagnostic.show, "Show diagnostics")
                     map("n", "<leader>lsa", "<cmd>LspStart<CR>", "Start LSP")
                     map("n", "<leader>lso", "<cmd>LspStop<CR>", "Stop LSP")
-                    map("n", "<leader>lss", "<cmd>LspStatus<CR>", "Show LSP status")
+                    map("n", "<leader>lss", "<cmd>LspInfo<CR>", "Show LSP status")
+                    map("n", "<leader>lm", "<cmd>Mason<CR>", "Manage LSPs")
 
                     -- Highlight references to the symbol under the cursor
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client and client.supports_method("textDocument/documentHighlight") then
                         local hl_group = vim.api.nvim_create_augroup("micronoyau_lsp_highlight", { clear = false })
                         vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                            buffer = event.buf,
-                            group  = hl_group,
+                            buffer   = event.buf,
+                            group    = hl_group,
                             callback = vim.lsp.buf.document_highlight,
                         })
                         vim.api.nvim_create_autocmd("CursorMoved", {
-                            buffer = event.buf,
-                            group  = hl_group,
+                            buffer   = event.buf,
+                            group    = hl_group,
                             callback = vim.lsp.buf.clear_references,
                         })
                     end
