@@ -182,7 +182,8 @@ map("n", "<leader>mf", "<cmd>Neominimap Focus<CR>", { desc = "Focus minimap" })
 -----------------------------------------------------------------
 -- Noice
 -----------------------------------------------------------------
-map("n", "<leader>n", "<cmd>Noice<CR>", { desc = "Noice message history" })
+map("n", "<leader>nn", "<cmd>Noice<CR>", { desc = "Noice message history" })
+map("n", "<leader>na", "<cmd>NoiceAll<CR>", { desc = "Noice message history (verbose)" })
 
 -----------------------------------------------------------------
 -- Misc convenience

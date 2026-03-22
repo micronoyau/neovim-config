@@ -47,3 +47,5 @@ opt.confirm = true
 
 -- Markdown preview
 vim.g.mkdp_filetypes = { "markdown" }
+vim.filetype.add({ extension = { MD = "markdown" } })
+vim.g.mkdp_browser = "firefox"
