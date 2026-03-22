@@ -1,12 +1,6 @@
 local map = vim.keymap.set
 
 -----------------------------------------------------------------
--- Window navigation
------------------------------------------------------------------
-map("n", "<C-j>", "<C-w>j", { desc = "Move to below window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Move to above window" })
-
------------------------------------------------------------------
 -- Window resizing
 -----------------------------------------------------------------
 map("n", "<leader>+", ":resize +10<CR>", { desc = "Increase height" })
@@ -26,26 +20,20 @@ map("n", "<leader>fs", ":tab split<CR>", { desc = "Full-screen tab split" })
 -- Bufferline / Tab navigation
 -----------------------------------------------------------------
 map("n", "<leader>q", function()
-    local cur = vim.api.nvim_get_current_buf()
-    local real_bufs = vim.tbl_filter(function(b)
-        return vim.bo[b].buflisted
-            and vim.bo[b].filetype ~= "neo-tree"
-            and b ~= cur
-    end, vim.api.nvim_list_bufs())
-    -- Switch the current window to another buffer before deleting so the
-    -- window is never closed (which would leave only neo-tree and exit Neovim)
-    if #real_bufs > 0 then
-        vim.api.nvim_set_current_buf(real_bufs[#real_bufs])
-    else
-        vim.cmd("enew")
+    if vim.bo.buftype ~= "" or not vim.bo.buflisted then
+        return -- Ignore special buffers (NeoTree, quickfix, etc.)
     end
-    vim.cmd("bd " .. cur)
+    local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+    if #bufs > 1 then
+        vim.cmd("bp | bd#") -- Multiple buffers: go to previous (bp) and delete it (alternate buf #)
+    else
+        vim.cmd("bd")       -- Single buffer: delete it
+    end
 end, { desc = "Close buffer" })
 map("n", "<C-l>", ":BufferLineCycleNext<CR>", { desc = "Go to right buffer" })
 map("n", "<C-h>", ":BufferLineCyclePrev<CR>", { desc = "Go to left buffer" })
 map("n", "<C-M-l>", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
 map("n", "<C-M-h>", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
-map("n", "<leader>bp", ":BufferLineTogglePin<CR>", { desc = "Pin buffer" })
 map("n", "<leader>bx", ":BufferLineCloseOthers<CR>", { desc = "Close other buffers" })
 map("n", "<leader>bl", ":Telescope buffers<CR>", { desc = "List open buffers" })
 for i = 1, 9 do
@@ -66,7 +54,53 @@ map("n", "<leader>ee", ":Neotree toggle<CR>", { desc = "Toggle file tree" })
 map("n", "<leader>er", ":Neotree reveal<CR>", { desc = "Reveal file in tree" })
 
 -----------------------------------------------------------------
--- Telescope
+-- LSP
+-----------------------------------------------------------------
+map("n", "<leader>ll", function() vim.lsp.buf.hover({ border = "rounded" }) end, { desc = "Hover" })
+map("n", "<leader>lf", function() vim.diagnostic.open_float({ border = "rounded" }) end, { desc = "Diagnostic float" })
+map("n", "<leader>ln", function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = "Next diagnostic" })
+map("n", "<leader>lN", function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = "Previous diagnostic" })
+map("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go to definition" })
+map("n", "<leader>lt", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Type definition" })
+map("n", "<leader>lx", "<cmd>Telescope lsp_references<CR>", { desc = "References" })
+map("n", "<leader>li", function()
+    -- Resolve the call hierarchy item at the cursor first, then fetch callers.
+    -- Jump directly when there is exactly one result; open Telescope otherwise.
+    local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+    local pos_params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+    vim.lsp.buf_request(0, "textDocument/prepareCallHierarchy", pos_params, function(err, items)
+        if err or not items or #items == 0 then return end
+        vim.lsp.buf_request(0, "callHierarchy/incomingCalls", { item = items[1] }, function(err2, calls)
+            if err2 or not calls or #calls == 0 then
+                vim.notify("No incoming calls found", vim.log.levels.INFO)
+                return
+            end
+            if #calls == 1 then
+                local from = calls[1].from
+                vim.lsp.util.show_document(
+                    { uri = from.uri, range = calls[1].fromRanges[1] },
+                    client.offset_encoding,
+                    { focus = true }
+                )
+            else
+                require("telescope.builtin").lsp_incoming_calls()
+            end
+        end)
+    end)
+end, { desc = "Incoming calls" })
+map("n", "<leader>lr", vim.lsp.buf.rename, { desc = "Rename symbol" })
+map("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
+map("n", "<leader>=", function() require("conform").format({ async = true, lsp_fallback = true }) end,
+    { desc = "Format buffer" })
+map("n", "<leader>lDh", vim.diagnostic.hide, { desc = "Hide diagnostics" })
+map("n", "<leader>lDs", vim.diagnostic.show, { desc = "Show diagnostics" })
+map("n", "<leader>lsa", "<cmd>LspStart<CR>", { desc = "Start LSP" })
+map("n", "<leader>lso", "<cmd>LspStop<CR>", { desc = "Stop LSP" })
+map("n", "<leader>lss", "<cmd>LspInfo<CR>", { desc = "Show LSP status" })
+map("n", "<leader>lm", "<cmd>Mason<CR>", { desc = "Manage LSPs" })
+
+-----------------------------------------------------------------
+-- Fuzzy finders
 -----------------------------------------------------------------
 map("n", "<leader>ff", ":Telescope live_grep<CR>", { desc = "Live grep" })
 map("n", "<leader>fb", ":Telescope live_grep grep_open_files=true<CR>", { desc = "Find in open buffers" })
@@ -74,12 +108,6 @@ map("n", "<leader>fa", ":Telescope find_files<CR>", { desc = "Find files" })
 map("n", "<leader>ft", ":TodoTelescope<CR>", { desc = "TODO comments" })
 map("n", "<leader>fo", ":Telescope lsp_document_symbols<CR>", { desc = "Document symbols" })
 map("n", "<leader>fc", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "Fuzzy search buffer" })
-
------------------------------------------------------------------
--- Clipboard
------------------------------------------------------------------
-map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to clipboard" })
-map("n", "<leader>p", '"+p', { desc = "Paste from clipboard" })
 
 -----------------------------------------------------------------
 -- Tab width toggles
@@ -150,11 +178,11 @@ end, { desc = "Close diffview" })
 -----------------------------------------------------------------
 map("n", "<leader>mm", "<cmd>Neominimap Toggle<CR>", { desc = "Toggle minimap" })
 map("n", "<leader>mf", "<cmd>Neominimap Focus<CR>", { desc = "Focus minimap" })
-map("n", "<leader>mu", "<cmd>Neominimap Unfocus<CR>", { desc = "Unfocus minimap" })
 
 -----------------------------------------------------------------
--- LSP keymaps: check out lazy.lua
+-- Noice
 -----------------------------------------------------------------
+map("n", "<leader>n", "<cmd>Noice<CR>", { desc = "Noice message history" })
 
 -----------------------------------------------------------------
 -- Misc convenience
@@ -166,7 +194,3 @@ map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 -- Move selected lines up/down in visual mode
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
-
--- Keep cursor centered during search navigation
-map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
-map("n", "N", "Nzzzv", { desc = "Prev search result (centered)" })

@@ -121,6 +121,56 @@ require("lazy").setup({
         opts = {},
     },
 
+    -----------------------------------------------------------------
+    -- UI: noice (cmdline, messages, notifications)
+    -----------------------------------------------------------------
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
+        config = function()
+            require("notify").setup({
+                render   = "compact",
+                timeout  = 3000,
+                max_width = 50,
+            })
+
+            require("noice").setup({
+                lsp = {
+                    override = {
+                        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                        ["vim.lsp.util.stylize_markdown"]                = true,
+                        ["cmp.entry.get_documentation"]                  = true,
+                    },
+                    progress = { enabled = true },
+                    hover    = { enabled = true },
+                    signature = { enabled = true },
+                },
+                presets = {
+                    bottom_search        = true,  -- classic bottom search bar
+                    command_palette      = true,  -- position cmdline + popupmenu together
+                    long_message_to_split = true, -- long messages in split
+                    inc_rename           = false,
+                    lsp_doc_border       = true,  -- bordered LSP hover/signature docs
+                },
+                cmdline = {
+                    enabled = true,
+                    view    = "cmdline_popup",
+                    format  = {
+                        cmdline  = { icon = ">" },
+                        search_down = { icon = " " },
+                        search_up   = { icon = " " },
+                    },
+                },
+                messages  = { enabled = true },
+                notify    = { enabled = true, view = "notify" },
+            })
+        end,
+    },
+
     { "nvim-tree/nvim-web-devicons", lazy = true },
 
     -----------------------------------------------------------------
@@ -132,7 +182,7 @@ require("lazy").setup({
         config = function()
             require("oil").setup({
                 view_options = {
-                    show_hidden = true,
+                    show_hidden = false,
                 },
                 columns = { "icon", "permissions", "size", "mtime" },
                 delete_to_trash = true,
@@ -176,7 +226,7 @@ require("lazy").setup({
         event        = "VimEnter",
         config       = function()
             require("neo-tree").setup({
-                close_if_last_window      = true,
+                close_if_last_window      = false,
                 popup_border_style        = "rounded",
                 enable_git_status         = true,
                 enable_diagnostics        = true,
@@ -184,7 +234,7 @@ require("lazy").setup({
                     filtered_items         = {
                         visible         = false,
                         hide_dotfiles   = false,
-                        hide_gitignored = true,
+                        hide_gitignored = false,
                     },
                     follow_current_file    = { enabled = true, leave_dirs_open = true },
                     use_libuv_file_watcher = true,
@@ -218,8 +268,6 @@ require("lazy").setup({
                     },
                 },
             })
-            -- Open the tree on startup without stealing focus
-            vim.cmd("Neotree show")
         end,
     },
 
@@ -379,64 +427,6 @@ require("lazy").setup({
             })
 
             -------------------------------------------------------
-            -- LSP keymaps via LspAttach autocommand (0.11 API)
-            -------------------------------------------------------
-            vim.api.nvim_create_autocmd("LspAttach", {
-                group = vim.api.nvim_create_augroup("micronoyau_lsp_keymaps", { clear = true }),
-                callback = function(event)
-                    local map = function(mode, lhs, rhs, desc)
-                        vim.keymap.set(mode, lhs, rhs, { buffer = event.buf, desc = desc })
-                    end
-
-                    map("n", "<leader>ll", function()
-                        vim.lsp.buf.hover(); vim.lsp.buf.hover()
-                    end, "Hover")
-                    map("n", "<leader>lf", function()
-                        vim.diagnostic.open_float(); vim.diagnostic.open_float()
-                    end, "Diagnostic float")
-                    map("n", "<leader>ln", function()
-                        vim.diagnostic.jump({ count = 1, float = true })
-                    end, "Next diagnostic")
-                    map("n", "<leader>lN", function()
-                        vim.diagnostic.jump({ count = -1, float = true })
-                    end, "Previous diagnostic")
-                    map("n", "<leader>ld", vim.lsp.buf.definition, "Go to definition")
-                    -- map("n", "<leader>lD",  vim.lsp.buf.declaration,        "Go to declaration")
-                    map("n", "<leader>lt", vim.lsp.buf.type_definition, "Type definition")
-                    map("n", "<leader>lx", vim.lsp.buf.references, "References")
-                    map("n", "<leader>li", vim.lsp.buf.incoming_calls, "Incoming calls")
-                    map("n", "<leader>lo", vim.lsp.buf.outgoing_calls, "Outgoing calls")
-                    map("n", "<leader>lr", vim.lsp.buf.rename, "Rename symbol")
-                    map("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
-                    map("n", "<leader>=", function()
-                        require("conform").format({ async = true, lsp_fallback = true })
-                    end, "Format buffer")
-                    map("n", "<leader>lDh", vim.diagnostic.hide, "Hide diagnostics")
-                    map("n", "<leader>lDs", vim.diagnostic.show, "Show diagnostics")
-                    map("n", "<leader>lsa", "<cmd>LspStart<CR>", "Start LSP")
-                    map("n", "<leader>lso", "<cmd>LspStop<CR>", "Stop LSP")
-                    map("n", "<leader>lss", "<cmd>LspInfo<CR>", "Show LSP status")
-                    map("n", "<leader>lm", "<cmd>Mason<CR>", "Manage LSPs")
-
-                    -- Highlight references to the symbol under the cursor
-                    local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    if client and client.supports_method("textDocument/documentHighlight") then
-                        local hl_group = vim.api.nvim_create_augroup("micronoyau_lsp_highlight", { clear = false })
-                        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                            buffer   = event.buf,
-                            group    = hl_group,
-                            callback = vim.lsp.buf.document_highlight,
-                        })
-                        vim.api.nvim_create_autocmd("CursorMoved", {
-                            buffer   = event.buf,
-                            group    = hl_group,
-                            callback = vim.lsp.buf.clear_references,
-                        })
-                    end
-                end,
-            })
-
-            -------------------------------------------------------
             -- Diagnostic appearance
             -------------------------------------------------------
             vim.diagnostic.config({
@@ -585,7 +575,7 @@ require("lazy").setup({
                     cpp        = { "clang-format" },
                     xml        = { "lsp" },
                 },
-                format_on_save = nil, -- use <leader>l= to format manually
+                format_on_save = nil, -- check LSP keymaps
             })
         end,
     },
@@ -657,6 +647,22 @@ require("lazy").setup({
         event        = "VeryLazy",
         dependencies = { "nvim-lua/plenary.nvim" },
         opts         = {},
+    },
+
+    -----------------------------------------------------------------
+    -- Word highlight (illuminate)
+    -----------------------------------------------------------------
+    {
+        "RRethy/vim-illuminate",
+        event = { "BufReadPost", "BufNewFile" },
+        config = function()
+            require("illuminate").configure({
+                providers = { "lsp", "treesitter", "regex" },
+                delay = 100,
+                under_cursor = true,
+                filetypes_denylist = { "neo-tree", "oil", "TelescopePrompt", "mason", "lazy" },
+            })
+        end,
     },
 
     -----------------------------------------------------------------
@@ -799,28 +805,14 @@ require("lazy").setup({
     },
 
     -----------------------------------------------------------------
-    -- Notification UI (noice.nvim)
-    -- Replaces the command line, search, and notifications with
-    -- floating windows for a cleaner look
+    -- Session management
     -----------------------------------------------------------------
     {
-        "folke/noice.nvim",
-        event        = "VeryLazy",
-        dependencies = { "MunifTanjim/nui.nvim" },
-        opts         = {
-            lsp = {
-                override = {
-                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                    ["vim.lsp.util.stylize_markdown"]                = true,
-                    ["cmp.entry.get_documentation"]                  = true,
-                },
-            },
-            presets = {
-                bottom_search         = true, -- classic bottom search bar
-                command_palette       = true, -- position cmdline + popupmenu together
-                long_message_to_split = true, -- send long messages to a split
-                lsp_doc_border        = true, -- bordered LSP hover/signature
-            },
+        "rmagatti/auto-session",
+        lazy = false,
+        opts = {
+            suppressed_dirs           = { "~/", "/tmp" },
+            auto_restore_last_session = true,
         },
     },
 
