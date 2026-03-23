@@ -2,7 +2,7 @@ local opt = vim.opt
 
 -- Line numbers
 opt.number = true
-opt.relativenumber = true
+-- opt.relativenumber = true
 
 -- Indentation
 opt.tabstop = 4
@@ -44,6 +44,10 @@ opt.updatetime = 250
 opt.mouse = "a"
 opt.clipboard = "unnamedplus"
 opt.confirm = true
+
+if vim.g.neovide then
+    vim.o.guifont = "0xProto Nerd Font Mono:h12"
+end
 
 -- Markdown preview
 vim.g.mkdp_filetypes = { "markdown" }
