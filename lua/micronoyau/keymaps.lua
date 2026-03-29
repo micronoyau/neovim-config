@@ -175,6 +175,11 @@ map("n", "<leader>gx", function()
 end, { desc = "Close diffview" })
 
 -----------------------------------------------------------------
+-- Session
+-----------------------------------------------------------------
+map("n", "<leader>a", ":AutoSession search<CR>", { desc = "Search sessions" })
+
+-----------------------------------------------------------------
 -- Minimap
 -----------------------------------------------------------------
 map("n", "<leader>mm", "<cmd>Neominimap Toggle<CR>", { desc = "Toggle minimap" })
@@ -185,13 +190,6 @@ map("n", "<leader>mf", "<cmd>Neominimap Focus<CR>", { desc = "Focus minimap" })
 -----------------------------------------------------------------
 map("n", "<leader>nn", "<cmd>Noice<CR>", { desc = "Noice message history" })
 map("n", "<leader>na", "<cmd>NoiceAll<CR>", { desc = "Noice message history (verbose)" })
-
------------------------------------------------------------------
--- Misc convenience
------------------------------------------------------------------
--- Clear search highlight on Esc (since hlsearch is off by
--- default, this is a safety net if you :set hlsearch)
-map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
 -- Move selected lines up/down in visual mode
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
