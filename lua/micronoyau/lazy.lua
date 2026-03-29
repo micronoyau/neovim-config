@@ -613,18 +613,37 @@ require("lazy").setup({
         "sindrets/diffview.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
-        opts = {
-            enhanced_diff_hl = true,
-            view = {
-                default = {
-                    layout = "diff2_horizontal", -- side-by-side
+        config = function()
+            local actions = require("diffview.actions")
+            require("diffview").setup({
+                enhanced_diff_hl = true,
+                view = {
+                    default = {
+                        layout = "diff2_horizontal", -- side-by-side
+                    },
+                    merge_tool = {
+                        layout = "diff3_horizontal", -- 3-way merge view
+                        disable_diagnostics = true,
+                    },
                 },
-                merge_tool = {
-                    layout = "diff3_horizontal", -- 3-way merge view
-                    disable_diagnostics = true,
+                keymaps = {
+                    diff3 = {
+                        { "n", "<leader>gmo", actions.conflict_choose("ours"),   { desc = "Choose OURS" } },
+                        { "n", "<leader>gmt", actions.conflict_choose("theirs"), { desc = "Choose THEIRS" } },
+                        { "n", "<leader>gmb", actions.conflict_choose("base"),   { desc = "Choose BASE" } },
+                        { "n", "<leader>gma", actions.conflict_choose("all"),    { desc = "Choose ALL" } },
+                        { "n", "<leader>gmx", actions.conflict_choose("none"),   { desc = "Delete conflict region" } },
+                    },
+                    diff4 = {
+                        { "n", "<leader>gmo", actions.conflict_choose("ours"),   { desc = "Choose OURS" } },
+                        { "n", "<leader>gmt", actions.conflict_choose("theirs"), { desc = "Choose THEIRS" } },
+                        { "n", "<leader>gmb", actions.conflict_choose("base"),   { desc = "Choose BASE" } },
+                        { "n", "<leader>gma", actions.conflict_choose("all"),    { desc = "Choose ALL" } },
+                        { "n", "<leader>gmx", actions.conflict_choose("none"),   { desc = "Delete conflict region" } },
+                    },
                 },
-            },
-        },
+            })
+        end,
     },
 
     -----------------------------------------------------------------

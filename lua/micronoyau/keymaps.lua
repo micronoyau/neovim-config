@@ -159,6 +159,7 @@ map("n", "<leader>ga", ":Git add %<CR>", { desc = "Git add current file" })
 map("n", "<leader>gs", ":Git status<CR>", { desc = "Git status" })
 map("n", "<leader>gc", ":Git commit<CR>", { desc = "Git commit" })
 map("n", "<leader>gl", ":Flogsplit<CR>", { desc = "Git log graph" })
+-- Merge conflict resolution: check out diffview keymaps, defined in lazy.lua opts
 map("n", "<leader>gd", ":DiffviewOpen<CR>", { desc = "Git diff (side-by-side)" })
 map("n", "<leader>gD", ":DiffviewFileHistory %<CR>", { desc = "Git file history" })
 map("n", "<leader>gx", function()
