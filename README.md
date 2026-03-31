@@ -42,7 +42,7 @@ A personal Neovim configuration built around a VSCode-like aesthetic.
 - **lspkind.nvim** — VSCode-style pictograms in the completion menu
 - **conform.nvim** — Manual formatting (no format-on-save)
 
-Auto-installed LSP servers: `bashls`, `clangd`, `dockerls`, `html`, `jsonls`, `lua_ls`, `marksman`, `pylsp`, `pyright`, `rust_analyzer`
+Auto-installed LSP servers: `bashls`, `clangd`, `docker_compose_language_service`, `dockerls`, `html`, `jdtls`, `jsonls`, `lemminx`, `lua_ls`, `marksman`, `pyright`, `rust_analyzer`
 
 Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 
@@ -94,7 +94,7 @@ Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 | `<leader>ld` | Go to definition |
 | `<leader>lt` | Type definition |
 | `<leader>lx` | References |
-| `<leader>li` / `<leader>lo` | Incoming / outgoing calls |
+| `<leader>li` | Incoming calls |
 | `<leader>lr` | Rename symbol |
 | `<leader>la` | Code action |
 | `<leader>=` | Format buffer |
@@ -132,7 +132,7 @@ Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 | Key | Action |
 |-----|--------|
 | `<leader>mm` | Toggle minimap |
-| `<leader>mf` / `<leader>mu` | Focus / unfocus minimap |
+| `<leader>mf` | Focus minimap |
 
 ## Notable Features
 

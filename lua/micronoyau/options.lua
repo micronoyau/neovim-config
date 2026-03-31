@@ -45,9 +45,13 @@ opt.mouse = "a"
 opt.clipboard = "unnamedplus"
 opt.confirm = true
 
+-- Neovide-specific
 if vim.g.neovide then
     vim.o.guifont = "0xProto Nerd Font Mono:h12"
 end
+
+-- Local files
+opt.exrc = true
 
 -- Markdown preview
 vim.g.mkdp_filetypes = { "markdown" }
