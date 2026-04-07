@@ -7,7 +7,7 @@ map("n", "<leader>+", ":resize +10<CR>", { desc = "Increase height" })
 map("n", "<leader>-", ":resize -10<CR>", { desc = "Decrease height" })
 map("n", "<leader>>", ":vertical resize +10<CR>", { desc = "Increase width" })
 map("n", "<leader><", ":vertical resize -10<CR>", { desc = "Decrease width" })
-map("n", "<leader>=", "<C-w>=", { desc = "Equalize window sizes" })
+-- map("n", "<leader>=", "<C-w>=", { desc = "Equalize window sizes" })
 
 -----------------------------------------------------------------
 -- Splits
