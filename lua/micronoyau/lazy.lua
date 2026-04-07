@@ -414,6 +414,7 @@ require("lazy").setup({
                     "clangd",
                     "docker_compose_language_service",
                     "dockerls",
+                    "eslint",
                     "html",
                     "jdtls",
                     "jsonls",
@@ -423,6 +424,7 @@ require("lazy").setup({
                     -- "pylsp",
                     "pyright",
                     "rust_analyzer",
+                    "ts_ls",
                 },
             })
 
