@@ -13,8 +13,7 @@ A personal Neovim configuration built around a VSCode-like aesthetic.
     ├── init.lua                  # Bootstrap: leader key, module loading
     ├── options.lua               # Editor options
     ├── keymaps.lua               # Global keymaps (non-plugin)
-    ├── lazy.lua                  # Plugin manager + all plugin configs
-    └── minimap_viewport.lua      # Custom minimap viewport highlight handler
+    └── lazy.lua                  # Plugin manager + all plugin configs
 ```
 
 ## Plugins
@@ -73,8 +72,6 @@ Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 ### Navigation
 | Key | Action |
 |-----|--------|
-| `<C-h>` / `<C-l>` | Previous / next buffer |
-| `<C-j>` / `<C-k>` | Window below / above |
 | `<leader>fa` | Find files |
 | `<leader>ff` | Live grep |
 | `<leader>fb` | Live grep in open buffers |
@@ -109,7 +106,10 @@ Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 | `<leader>gD` | DiffView file history |
 | `<leader>gp` | Preview hunk |
 | `<leader>gt` | Toggle line blame |
+| `<leader>gb` | Git blame |
 | `<leader>gn` / `<leader>gN` | Next / previous hunk |
+| `<leader>gr` | Reset hunk |
+| `<leader>gR` | Reset buffer |
 
 ### Terminal
 | Key | Action |
@@ -118,26 +118,23 @@ Formatters: `stylua`, `black`, `prettier`, `rustfmt`, `clang-format`
 | `<leader>tv` | Toggle terminal (vertical) |
 | `<leader>tf` | Toggle terminal (float) |
 
-### Splits & Buffers
+### Splits, Buffers and Tabs
 | Key | Action |
 |-----|--------|
-| `<leader>s` / `<leader>S` | Vertical / horizontal split |
-| `<leader>fs` | Full-screen tab split |
+| `<C-h>` / `<C-l>` | Previous / next buffer |
+| `<C-w>j` / `<C-w>k` | Window below / above |
+| `<C-w>h` / `<C-w>l` | Window to the left / right |
+| `<C-w>v` / `<C-w>s` | Vertical / horizontal split |
 | `<leader>q` | Smart buffer close |
+| `C-l` | Go to next buffer |
+| `<leader>fs` | Full-screen tab split |
 | `<leader>b1`–`<leader>b9` | Jump to buffer by number |
-| `<leader>bp` | Pin buffer |
 | `<leader>bx` | Close all other buffers |
+| `<leader>Q` | Close current tab (neovim tab, not bufferline tab) |
+| `<C-w>th` / `<C-w>tl` | Go to previous / next tab (neovim tab, not bufferline tab) |
 
 ### Minimap
 | Key | Action |
 |-----|--------|
 | `<leader>mm` | Toggle minimap |
 | `<leader>mf` | Focus minimap |
-
-## Notable Features
-
-- **Custom minimap viewport**: A hand-rolled `neominimap` handler (`minimap_viewport.lua`) that renders a shaded highlight region on the minimap corresponding to the currently visible lines — matching the VSCode scroll indicator behavior.
-- **Smart buffer close**: `<leader>q` switches to another buffer before deleting to prevent Neovim from closing when neo-tree is the only remaining window.
-- **Float-enter hover**: `<leader>ll` and `<leader>lf` call their functions twice so the cursor automatically jumps into the floating window on the second press.
-- **Uniform float dismiss**: An autocommand maps `<Esc>` to close any floating window on entry, so all floats are dismissible consistently.
-- **Neovim 0.11 LSP API**: Uses `vim.lsp.config()` with global capability injection instead of the legacy lspconfig setup pattern.

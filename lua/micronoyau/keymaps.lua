@@ -7,13 +7,10 @@ map("n", "<leader>+", ":resize +10<CR>", { desc = "Increase height" })
 map("n", "<leader>-", ":resize -10<CR>", { desc = "Decrease height" })
 map("n", "<leader>>", ":vertical resize +10<CR>", { desc = "Increase width" })
 map("n", "<leader><", ":vertical resize -10<CR>", { desc = "Decrease width" })
--- map("n", "<leader>=", "<C-w>=", { desc = "Equalize window sizes" })
 
 -----------------------------------------------------------------
 -- Splits
 -----------------------------------------------------------------
-map("n", "<leader>s", ":vs<CR>", { desc = "Vertical split" })
-map("n", "<leader>S", ":sp<CR>", { desc = "Horizontal split" })
 map("n", "<leader>fs", ":tab split<CR>", { desc = "Full-screen tab split" })
 
 -----------------------------------------------------------------
@@ -41,6 +38,9 @@ for i = 1, 9 do
         require("bufferline").go_to(i, true)
     end, { desc = "Go to buffer " .. i })
 end
+map("n", "<leader>Q", ":tabclose<CR>", { desc = "Close current tab" })
+map("n", "<C-w>tl", ":tabnext<CR>", { desc = "Go to next tab" })
+map("n", "<C-w>th", ":tabprevious<CR>", { desc = "Go to prev tab" })
 
 -----------------------------------------------------------------
 -- Oil (file explorer)
@@ -159,20 +159,8 @@ map("n", "<leader>ga", ":Git add %<CR>", { desc = "Git add current file" })
 map("n", "<leader>gs", ":Git status<CR>", { desc = "Git status" })
 map("n", "<leader>gc", ":Git commit<CR>", { desc = "Git commit" })
 map("n", "<leader>gl", ":Flogsplit<CR>", { desc = "Git log graph" })
--- Merge conflict resolution: check out diffview keymaps, defined in lazy.lua opts
-map("n", "<leader>gd", ":DiffviewOpen<CR>", { desc = "Git diff (side-by-side)" })
+map("n", "<leader>gd", ":DiffviewOpen ", { desc = "Git diff (side-by-side)" })
 map("n", "<leader>gD", ":DiffviewFileHistory %<CR>", { desc = "Git file history" })
-map("n", "<leader>gx", function()
-    -- Clear the modified flag on diffview's nowrite buffers before closing
-    -- to avoid the "Other window contains changes" tabclose error.
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        local buf = vim.api.nvim_win_get_buf(win)
-        if vim.bo[buf].modified and vim.bo[buf].buftype == "nowrite" then
-            vim.bo[buf].modified = false
-        end
-    end
-    vim.cmd("DiffviewClose")
-end, { desc = "Close diffview" })
 
 -----------------------------------------------------------------
 -- Session

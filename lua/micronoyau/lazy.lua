@@ -133,40 +133,40 @@ require("lazy").setup({
         },
         config = function()
             require("notify").setup({
-                render   = "compact",
-                timeout  = 3000,
+                render    = "compact",
+                timeout   = 3000,
                 max_width = 50,
             })
 
             require("noice").setup({
-                lsp = {
-                    override = {
+                lsp      = {
+                    override  = {
                         ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
                         ["vim.lsp.util.stylize_markdown"]                = true,
                         ["cmp.entry.get_documentation"]                  = true,
                     },
-                    progress = { enabled = true },
-                    hover    = { enabled = true },
+                    progress  = { enabled = true },
+                    hover     = { enabled = true },
                     signature = { enabled = true },
                 },
-                presets = {
-                    bottom_search        = true,  -- classic bottom search bar
-                    command_palette      = true,  -- position cmdline + popupmenu together
+                presets  = {
+                    bottom_search         = true, -- classic bottom search bar
+                    command_palette       = true, -- position cmdline + popupmenu together
                     long_message_to_split = true, -- long messages in split
-                    inc_rename           = false,
-                    lsp_doc_border       = true,  -- bordered LSP hover/signature docs
+                    inc_rename            = false,
+                    lsp_doc_border        = true, -- bordered LSP hover/signature docs
                 },
-                cmdline = {
+                cmdline  = {
                     enabled = true,
                     view    = "cmdline_popup",
                     format  = {
-                        cmdline  = { icon = ">" },
+                        cmdline     = { icon = ">" },
                         search_down = { icon = " " },
                         search_up   = { icon = " " },
                     },
                 },
-                messages  = { enabled = true },
-                notify    = { enabled = true, view = "notify" },
+                messages = { enabled = true },
+                notify   = { enabled = true, view = "notify" },
             })
         end,
     },
@@ -446,24 +446,6 @@ require("lazy").setup({
                 severity_sort    = true,
                 float            = { border = "rounded", source = true },
             })
-
-            -------------------------------------------------------
-            -- Close floating diagnostic windows with <Esc>
-            -------------------------------------------------------
-            vim.api.nvim_create_autocmd("WinEnter", {
-                group = vim.api.nvim_create_augroup("micronoyau_float_close", { clear = true }),
-                callback = function()
-                    local win = vim.api.nvim_get_current_win()
-                    if vim.api.nvim_win_get_config(win).relative ~= "" then
-                        vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", {
-                            buffer = vim.api.nvim_win_get_buf(win),
-                            silent = true,
-                            nowait = true,
-                            desc   = "Close floating window",
-                        })
-                    end
-                end,
-            })
         end,
     },
 
@@ -628,22 +610,6 @@ require("lazy").setup({
                         disable_diagnostics = true,
                     },
                 },
-                keymaps = {
-                    diff3 = {
-                        { "n", "<leader>gmo", actions.conflict_choose("ours"),   { desc = "Choose OURS" } },
-                        { "n", "<leader>gmt", actions.conflict_choose("theirs"), { desc = "Choose THEIRS" } },
-                        { "n", "<leader>gmb", actions.conflict_choose("base"),   { desc = "Choose BASE" } },
-                        { "n", "<leader>gma", actions.conflict_choose("all"),    { desc = "Choose ALL" } },
-                        { "n", "<leader>gmx", actions.conflict_choose("none"),   { desc = "Delete conflict region" } },
-                    },
-                    diff4 = {
-                        { "n", "<leader>gmo", actions.conflict_choose("ours"),   { desc = "Choose OURS" } },
-                        { "n", "<leader>gmt", actions.conflict_choose("theirs"), { desc = "Choose THEIRS" } },
-                        { "n", "<leader>gmb", actions.conflict_choose("base"),   { desc = "Choose BASE" } },
-                        { "n", "<leader>gma", actions.conflict_choose("all"),    { desc = "Choose ALL" } },
-                        { "n", "<leader>gmx", actions.conflict_choose("none"),   { desc = "Delete conflict region" } },
-                    },
-                },
             })
         end,
     },
@@ -725,7 +691,7 @@ require("lazy").setup({
         lazy = false,
         init = function()
             vim.g.neominimap = {
-                auto_enable = true,
+                auto_enable = false,
                 layout      = "float", -- float | split
                 float       = {
                     minimap_width = 15,
@@ -740,7 +706,6 @@ require("lazy").setup({
                 },
                 git         = { enabled = true },
                 treesitter  = { enabled = true },
-                handlers    = { require("micronoyau.minimap_viewport") },
             }
         end,
     },
@@ -820,8 +785,8 @@ require("lazy").setup({
             },
         },
         keys  = {
-            { "<leader>c", mode = { "n", "x", "o" }, function() require("flash").jump() end,       desc = "Flash jump" },
-            { "<leader>C", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash treesitter" },
+            { "<leader>s", mode = { "n", "x", "o" }, function() require("flash").jump() end,       desc = "Flash jump" },
+            { "<leader>S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash treesitter" },
         },
     },
 
